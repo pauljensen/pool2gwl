@@ -45,9 +45,9 @@ def pool2gwl(plate, well, poolfile, gwlfile, template, debug):
                                                            well=well,
                                                            code=code))
 
-    wells = [i+1 for i, b in enumerate(code) if b == '1']
-    wells1 = wells[0:len(wells)//2]
-    wells2 = wells[len(wells)//2:]
+    all_wells = [i+1 for i, b in enumerate(code) if b == '1']
+    wells1 = all_wells[0:len(all_wells)//2]
+    wells2 = all_wells[len(all_wells)//2:]
 
     def print_subpool(filename, wells):
         with open(filename, 'w') as f:
