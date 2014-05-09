@@ -20,7 +20,7 @@ parser.add_argument('--debug', dest='debug', action='store_true',
 DEFAULTS = dict(poolfile='codes.csv',
                 gwlfile='pool{i}.gwl',
                 template='put it in well {i}',
-                debug='False)
+                debug='False')
 
 
 def pool2gwl(plate, well, poolfile, gwlfile, template, debug):
