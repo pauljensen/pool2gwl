@@ -1,0 +1,12 @@
+draw 100ul from plate 1, well 1
+put 20ul in 1
+put 20ul in 2
+put 20ul in 4
+put 20ul in 5
+put 20ul in 7
+draw 100ul from plate 2, well 1
+put 20ul in 8
+put 20ul in 11
+put 20ul in 14
+put 20ul in 20
+put 20ul in 21

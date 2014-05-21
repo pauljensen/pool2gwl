@@ -12,18 +12,27 @@ parser.add_argument('--poolfile', dest='poolfile',
                     help="CSV file of pooling codes (plate,well,code)")
 parser.add_argument('--gwlfile', dest='gwlfile',
                     help="template filename for output (.gwl) file")
-parser.add_argument('--template', dest='template',
-                    help="pipette command template; use {i} for well")
+parser.add_argument('--aspirate_template', dest='aspirate_template',
+                    help=("aspirate command template; use {split}, "
+                          + "{well}, and {volume}"))
+parser.add_argument('--dispense_template', dest='dispense_template',
+                    help="pipette command template; use {pool} and {volume}")
+parser.add_argument('--volume', dest='volume',
+                    help="despense volume for pools (ul)")
 parser.add_argument('--debug', dest='debug', action='store_true',
                     help="enable debugging messages")
 
 DEFAULTS = dict(poolfile='codes.csv',
-                gwlfile='pool{i}.gwl',
-                template='put it in well {i}',
+                gwlfile='pool.gwl',
+                aspirate_template=('draw {volume}ul from plate {split}, ' +
+                                   'well {well}'),
+                dispense_template='put {volume}ul in {pool}',
+                volume=20,
                 debug='False')
 
 
-def pool2gwl(plate, well, poolfile, gwlfile, template, debug):
+def pool2gwl(plate, well, poolfile, gwlfile, aspirate_template,
+             dispense_template, volume, debug):
     def show(string):
         if debug:
             print string
@@ -41,23 +50,22 @@ def pool2gwl(plate, well, poolfile, gwlfile, template, debug):
         return False
 
     show("")
-    show("Key {plate},{well} mapped to code {code}".format(plate=plate,
+    show("key {plate},{well} mapped to code {code}".format(plate=plate,
                                                            well=well,
                                                            code=code))
 
     all_wells = [i+1 for i, b in enumerate(code) if b == '1']
-    wells1 = all_wells[0:len(all_wells)//2]
-    wells2 = all_wells[len(all_wells)//2:]
+    wells = [[], all_wells[0:len(all_wells)//2], all_wells[len(all_wells)//2:]]
 
-    def print_subpool(filename, wells):
-        with open(filename, 'w') as f:
-            show("File '{file}' contains wells {w}".format(file=filename,
-                                                           w=wells))
-            for i in wells:
-                f.write(template.format(i=i) + "\n")
-
-    print_subpool(gwlfile.format(i=1), wells1)
-    print_subpool(gwlfile.format(i=2), wells2)
+    with open(gwlfile, 'w') as f:
+        for split in [1, 2]:
+            show("split {split} contains pools {w}".format(split=split,
+                                                           w=wells[split]))
+            vol = volume * len(wells[split])
+            f.write(aspirate_template.format(split=split, well=well,
+                                             volume=vol) + "\n")
+            for i in wells[split]:
+                f.write(dispense_template.format(pool=i, volume=volume) + "\n")
 
     show("")
     return True
@@ -72,10 +80,13 @@ if __name__ == '__main__':
         params['poolfile'] = args.poolfile
     if args.gwlfile:
         params['gwlfile'] = args.gwlfile
-    if args.template:
-        params['template'] = args.template
+    if args.aspirate_template:
+        params['aspirate_template'] = args.aspirate_template
+    if args.dispense_template:
+        params['dispense_template'] = args.dispense_template
+    if args.volume:
+        params['volume'] = float(args.volume)
     if args.debug:
         params['debug'] = args.debug
 
     pool2gwl(**params)
-
