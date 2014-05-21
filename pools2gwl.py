@@ -13,8 +13,8 @@ parser.add_argument('--poolfile', dest='poolfile',
 parser.add_argument('--gwlfile', dest='gwlfile',
                     help="template filename for output (.gwl) file")
 parser.add_argument('--aspirate_template', dest='aspirate_template',
-                    help=("aspirate command template; use {split}, "
-                          + "{well}, and {volume}"))
+                    help=("aspirate command template; use {split}, " +
+                          "{well}, and {volume}"))
 parser.add_argument('--dispense_template', dest='dispense_template',
                     help="pipette command template; use {pool} and {volume}")
 parser.add_argument('--volume', dest='volume',
